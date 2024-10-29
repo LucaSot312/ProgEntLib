@@ -1,0 +1,6 @@
+@ProgEntLib_HostAddress = http://localhost:5218
+
+GET {{ProgEntLib_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
