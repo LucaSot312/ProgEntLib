@@ -7,7 +7,7 @@ namespace ProgEntLib.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[libro]")]
     public class ControllerLibro : ControllerBase
     {
         private readonly LibroService _libroService;
@@ -47,7 +47,7 @@ namespace ProgEntLib.Controllers
             if (!result)
                 return NotFound();
 
-            return NoContent();
+            return Ok("Libro aggiornato");
         }
 
         [HttpDelete("{id}")]
@@ -57,7 +57,7 @@ namespace ProgEntLib.Controllers
             if (!result)
                 return NotFound();
 
-            return NoContent();
+            return Ok("Libro rimosso");
         }
 
         [HttpGet("search")]

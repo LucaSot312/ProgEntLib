@@ -69,7 +69,7 @@ namespace ProgEntLib.Service
                 .ToListAsync();
         }
 
-        internal async Task<string> CreaLibroAsync(DTOLibro newBook)
+        internal async Task<Libro> CreaLibroAsync(DTOLibro newBook)
         {
             var book = new Libro
             {
@@ -81,7 +81,7 @@ namespace ProgEntLib.Service
             };
 
            await _libroCollection.InsertOneAsync(book);
-           return book.Id.ToString();
+           return book;
         }
 
         internal async Task<Libro> GetLibroByIdAsync(string id)
