@@ -1,4 +1,11 @@
 
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
+using ProgEntLib.Properties;
+using ProgEntLib.Service;
+
 namespace ProgEntLib
 {
     public class Program
@@ -7,16 +14,48 @@ namespace ProgEntLib
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
+            builder.Services.AddSingleton<IMongoClient>(s =>
+            {
+                var settings = builder.Configuration.GetSection("MongoDB").Get<MongoDBSettings>();
+                return new MongoClient(settings.ConnectionString);
+            });
 
+            builder.Services.AddScoped(s =>
+            {
+                var client = s.GetRequiredService<IMongoClient>();
+                var settings = builder.Configuration.GetSection("MongoDB").Get<MongoDBSettings>();
+                return client.GetDatabase(settings.DatabaseName);
+            });
+
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+            var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]);
+
+            builder.Services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+            builder.Services.AddScoped<UtenteService>();
+            builder.Services.AddScoped<CategoriaService>();
+            builder.Services.AddScoped<LibroService>();
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -24,12 +63,10 @@ namespace ProgEntLib
             }
 
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
-
             app.MapControllers();
-
             app.Run();
         }
     }

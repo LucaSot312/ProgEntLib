@@ -1,9 +1,6 @@
-﻿using System.ComponentModel;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProgEntLib.DTO;
-using ProgEntLib.Models;
 using ProgEntLib.Service;
 
 namespace ProgEntLib.Controllers
