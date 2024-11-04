@@ -18,6 +18,6 @@ namespace ProgEntLib.DTO
         public string Editore { get; set; }
 
         [Required]
-        public List<Categoria> Categorie { get; set; }
+        public List<DTOCategoria> Categorie { get; set; }
     }
 }

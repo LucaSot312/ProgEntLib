@@ -5,29 +5,40 @@ using ProgEntLib.Service;
 
 namespace ProgEntLib.Controllers
 {
-    [Authorize]
     [ApiController]
-    [Route("api/[utente]")]
+    [Route("api/utente")]
     public class ControllerUtente : ControllerBase
     {
         private readonly UtenteService _utenteService;
 
-        public ControllerUtente(UtenteService _utenteService)
+        public ControllerUtente(UtenteService utenteService)
         {
-            _utenteService = this._utenteService;
+            _utenteService = utenteService ?? throw new ArgumentNullException(nameof(utenteService));
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] DTOUtente utente)
         {
-            var success = await _utenteService.CreaUtenteAsync(utente);
-            if (success == null)
+            if (utente == null)
             {
-                return BadRequest("Nessun nuovo utente registrato!!");
+                return BadRequest("Dati utente non validi.");
             }
 
-            return Ok(success);
+            if (string.IsNullOrEmpty(utente.Nome) || string.IsNullOrEmpty(utente.Email) || string.IsNullOrEmpty(utente.Password))
+            {
+                return BadRequest("Tutti i campi sono obbligatori.");
+            }
+
+            var result = await _utenteService.CreaUtenteAsync(utente);
+
+            if (result == null)
+            {
+                return Conflict("L'utente esiste già.");
+            }
+
+            return Ok("Registrazione avvenuta con successo.");
         }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] DTOLogin login)

@@ -7,17 +7,17 @@ namespace ProgEntLib.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[categoria]")]
+    [Route("api/categoria")]
     public class ControllerCategoria : ControllerBase
     {
         private readonly CategoriaService _categoriaService;
 
         public ControllerCategoria(CategoriaService categoriaService)
         {
-            _categoriaService = categoriaService;
+            _categoriaService = categoriaService ?? throw new ArgumentNullException(nameof(categoriaService));
         }
 
-        [HttpPost]
+        [HttpPost("crea")]
         public async Task<IActionResult> CreaCategoria([FromBody] DTOCategoria categoria)
         {
             var success = await _categoriaService.CreaCategoriaAsync(categoria);
@@ -29,7 +29,7 @@ namespace ProgEntLib.Controllers
             return Ok(success);
         }
 
-        [HttpDelete("{nome}")]
+        [HttpDelete("elimina/{nome}")]
         public async Task<IActionResult> CancellaCategoria(string nome)
         {
             var success = await _categoriaService.CancellaCategoriaAsync(nome);
@@ -39,7 +39,7 @@ namespace ProgEntLib.Controllers
             return Ok("Categoria "+ nome +" cancellata");
         }
 
-        [HttpGet]
+        [HttpGet("allCategorie")]
         public async Task<IActionResult> tutteCategorie()
         {
             var categorie = await _categoriaService.tutteCategorieAsync();

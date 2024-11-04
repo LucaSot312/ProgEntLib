@@ -27,7 +27,8 @@ namespace ProgEntLib.Service
                 return null;
             }
 
-            utente.Password = BCrypt.Net.BCrypt.HashPassword(utente.Password);
+            var salt = BCrypt.Net.BCrypt.GenerateSalt(44);
+            utente.Password = BCrypt.Net.BCrypt.HashPassword(utente.Password, salt);
 
             var trueUser = new Utente
             {
@@ -44,7 +45,7 @@ namespace ProgEntLib.Service
         public async Task<string?> AutenticaUtenteAsync(DTOLogin login)
         {
             var user = await _utentiCollection.Find(u => u.Email == login.Email).FirstOrDefaultAsync();
-            if (user == null || !BCrypt.Net.BCrypt.Verify(user.Password, login.Password))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(login.Password, user.Password))
             {
                 return null;
             }

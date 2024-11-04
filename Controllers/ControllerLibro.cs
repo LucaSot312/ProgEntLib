@@ -7,7 +7,7 @@ namespace ProgEntLib.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[libro]")]
+    [Route("api/libro")]
     public class ControllerLibro : ControllerBase
     {
         private readonly LibroService _libroService;
@@ -17,7 +17,7 @@ namespace ProgEntLib.Controllers
             _libroService = libroService;
         }
 
-        [HttpGet]
+        [HttpPost("crea")]
         public async Task<IActionResult> CreaLibro([FromBody] DTOLibro newBook)
         {
             if (!ModelState.IsValid)
@@ -27,7 +27,7 @@ namespace ProgEntLib.Controllers
             return CreatedAtAction(nameof(GetLibroById), new { id = bookId }, newBook);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("libroById/{id}")]
         public async Task<IActionResult> GetLibroById(string id)
         {
             var book = await _libroService.GetLibroByIdAsync(id);
@@ -37,7 +37,7 @@ namespace ProgEntLib.Controllers
             return Ok(book);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("aggiorna/{id}")]
         public async Task<IActionResult> UpdateBook(string id, [FromBody] DTOLibro dtoLibro)
         {
             if(!ModelState.IsValid)
@@ -50,7 +50,7 @@ namespace ProgEntLib.Controllers
             return Ok("Libro aggiornato");
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("elimina/{id}")]
         public async Task<IActionResult> CancellaLibro(string id)
         {
             var result = await _libroService.CancellaLibroAsync(id);
