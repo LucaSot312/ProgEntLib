@@ -98,7 +98,7 @@ namespace ProgEntLib.Service
 
         public async Task<List<Categoria>> filtraDTOCategorie(List<DTOCategoria> dtoCategorie)
         {
-            List<Categoria> categorieFinali = null;
+            List<Categoria> categorieFinali = new List<Categoria>();
 
             foreach (var dtoCategoria in dtoCategorie)
             {
@@ -120,7 +120,10 @@ namespace ProgEntLib.Service
                         Nome = dtoCategoria.Nome
                     };
                     await _categorieCollection.InsertOneAsync(nuovaCategoria);
-                    categorieFinali.Add(nuovaCategoria);
+                   nuovaCategoria = await _categorieCollection
+                           .Find(c => c.Nome == dtoCategoria.Nome)
+                           .FirstOrDefaultAsync();
+                   categorieFinali.Add(nuovaCategoria);
                 }
             }
 

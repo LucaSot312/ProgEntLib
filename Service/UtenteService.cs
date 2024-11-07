@@ -12,11 +12,13 @@ namespace ProgEntLib.Service
     {
         private readonly IMongoCollection<Utente> _utentiCollection;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<UtenteService> _logger;
 
-        public UtenteService(IMongoDatabase database, IConfiguration configuration)
+        public UtenteService(IMongoDatabase database, IConfiguration configuration, ILogger<UtenteService> logger)
         {
             _utentiCollection = database.GetCollection<Utente>("users");
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<Utente> CreaUtenteAsync(DTOUtente utente)
@@ -27,8 +29,7 @@ namespace ProgEntLib.Service
                 return null;
             }
 
-            var salt = BCrypt.Net.BCrypt.GenerateSalt(44);
-            utente.Password = BCrypt.Net.BCrypt.HashPassword(utente.Password, salt);
+            utente.Password = BCrypt.Net.BCrypt.HashPassword(utente.Password);
 
             var trueUser = new Utente
             {
@@ -36,7 +37,7 @@ namespace ProgEntLib.Service
                 Cognome = utente.Cognome,
                 Email = utente.Email,
                 Password = utente.Password
-            }; 
+            };
 
             await _utentiCollection.InsertOneAsync(trueUser);
             return trueUser;
@@ -51,21 +52,25 @@ namespace ProgEntLib.Service
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Secretkey"]);
+            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:SecretKey"]);
             var TokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier,user.Nome),
+                    new Claim(ClaimTypes.NameIdentifier, user.Nome),
                     new Claim(ClaimTypes.GivenName, user.Cognome),
                     new Claim(ClaimTypes.Email, user.Email)
                 }),
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
+                    SecurityAlgorithms.HmacSha256Signature),
+                Issuer = _configuration["JwtSettings:Issuer"],
+                Audience = _configuration["JwtSettings:Audience"]
             };
 
             var token = tokenHandler.CreateToken(TokenDescriptor);
+            var trueToken = tokenHandler.WriteToken(token);
+            _logger.LogInformation("Generated token : {Token}", trueToken);
             return tokenHandler.WriteToken(token);
         }
     }
