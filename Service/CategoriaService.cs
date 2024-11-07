@@ -1,5 +1,4 @@
 ﻿using MongoDB.Driver;
-using ProgEntLib.DTO;
 using ProgEntLib.Models;
 
 namespace ProgEntLib.Service
@@ -8,30 +7,33 @@ namespace ProgEntLib.Service
     {
         private readonly IMongoCollection<Categoria> _categoriaCollection;
         private readonly IMongoCollection<Libro> _libroCollection;
+        private readonly ILogger<UtenteService> _logger;
 
         public CategoriaService(IMongoCollection<Categoria> categoriaCollection,
-            IMongoCollection<Libro> libroCollection)
+            IMongoCollection<Libro> libroCollection,
+            ILogger<UtenteService> logger)
         {
             _categoriaCollection = categoriaCollection;
             _libroCollection = libroCollection;
+            _logger = logger;
         }
 
-        public async Task<Categoria> CreaCategoriaAsync(DTOCategoria categoria)
+        public async Task<Categoria> CreaCategoriaAsync(string categoria)
         {
             var existingCategoria = await _categoriaCollection.Find
-                (c => c.Nome.ToLower() == categoria.Nome).FirstOrDefaultAsync();
+                (c => c.Nome == categoria).FirstOrDefaultAsync();
             if (existingCategoria == null)
             {
-                return null;
+                var nuovaCategoria = new Categoria
+                {
+                    Nome = categoria
+                };
+
+                await _categoriaCollection.InsertOneAsync(nuovaCategoria);
+                return nuovaCategoria;
             }
-
-            var trueCategoria = new Categoria
-            {
-                Nome = categoria.Nome
-            };
-
-            await _categoriaCollection.InsertOneAsync(trueCategoria);
-            return trueCategoria;
+            
+            return null;
         }
 
         public async Task<bool> CancellaCategoriaAsync(string category)

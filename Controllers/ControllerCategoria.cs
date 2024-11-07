@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProgEntLib.DTO;
 using ProgEntLib.Service;
 
 namespace ProgEntLib.Controllers
@@ -11,22 +10,25 @@ namespace ProgEntLib.Controllers
     public class ControllerCategoria : ControllerBase
     {
         private readonly CategoriaService _categoriaService;
+        private readonly ILogger<UtenteService> _logger;
 
-        public ControllerCategoria(CategoriaService categoriaService)
+        public ControllerCategoria(CategoriaService categoriaService, ILogger<UtenteService> logger)
         {
             _categoriaService = categoriaService ?? throw new ArgumentNullException(nameof(categoriaService));
+            _logger = logger;
         }
 
         [HttpPost("crea")]
-        public async Task<IActionResult> CreaCategoria([FromBody] DTOCategoria categoria)
+        public async Task<IActionResult> CreaCategoria(string nome)
         {
-            var success = await _categoriaService.CreaCategoriaAsync(categoria);
-            if (success.Equals(null))
+            var success = await _categoriaService.CreaCategoriaAsync(nome);
+            
+            if (success == null)
             {
-                return BadRequest("Categoria già esistente!!");
+                return BadRequest("Categoria gia esistente");
             }
 
-            return Ok(success);
+            return Ok("Categoria "+ nome + " creata");
         }
 
         [HttpDelete("elimina/{nome}")]
