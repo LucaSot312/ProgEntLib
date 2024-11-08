@@ -47,6 +47,7 @@ namespace ProgEntLib
             builder.Services.AddScoped<UtenteService>();
             builder.Services.AddScoped<CategoriaService>();
             builder.Services.AddScoped<LibroService>();
+            builder.Services.AddScoped<DatabaseService>();
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
