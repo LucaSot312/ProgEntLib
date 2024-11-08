@@ -1,6 +1,8 @@
-﻿# ProgEntLib - Gestione Catalogo Librario
+﻿
+# ProgEntLib - Gestione Catalogo Librario
 
-Questa applicazione web API è progettata per la gestione di un catalogo di una libreria, con funzionalità per la gestione di utenti, libri e categorie, implementata con .NET 8 e MongoDB.
+Questa applicazione web API è progettata per la gestione di un catalogo di una libreria, 
+con funzionalità per la gestione di utenti, libri e categorie, implementata con .NET 8 e MongoDB.
 
 ## Requisiti
 
@@ -12,7 +14,7 @@ Questa applicazione web API è progettata per la gestione di un catalogo di una 
 
 1. **Clona il repository**:
    ```bash
-   git clone <URL_DEL_REPOSITORY>
+   git clone https://github.com/LucaSot312/ProgEntLib.git
    cd ProgEntLib
    ```
 
@@ -92,21 +94,13 @@ Alcuni endpoint chiave:
   - POST `/api/database/backup` - Effettua il backup del database. Il file JSON viene salvato nella cartella `Backups`.
   - POST `/api/database/restore` - Ripristina il database da un file JSON nella cartella `Backups`.
 
-### Esempio di richiesta con cURL
-
-Per autenticare una richiesta, aggiungi l'header `Authorization: Bearer <TOKEN>`. Esempio di richiesta per creare una categoria:
-
-```bash
-curl -X POST "https://localhost:5001/api/categorie" -H "Authorization: Bearer <TOKEN>" -H "Content-Type: application/json" -d "{"nome": "Fiction"}"
-```
-
 ## Backup e Restore del Database
 
 ### Backup
 
 L'endpoint `/api/database/backup` genera un file JSON nella cartella `Backups` contenente il dump dell'intero database. Questo file può essere caricato in altri ambienti o usato per il ripristino.
 
-1. Esegui una richiesta POST a `/api/database/backup` specificando facoltativamente il nome del file:
+1. Esegui una richiesta POST a `/api/database/backup` :
    ```bash
    curl -X POST "https://localhost:5001/api/database/backup"
    ```
@@ -115,7 +109,7 @@ L'endpoint `/api/database/backup` genera un file JSON nella cartella `Backups` c
 
 L'endpoint `/api/database/restore` consente di ripristinare il database dal file di backup.
 
-1. Inserisci il nome del file da ripristinare (ad es. `LibreriaEnterprise-backup-2024-11-07.json`) senza l'estensione `.json`.
+1. Inserisci il nome del file da ripristinare (ad es. `LibreriaEnterprise-backup-2024-11-07.json`).
 2. Esegui una richiesta POST a `/api/database/restore`, specificando il nome del file:
    ```bash
    curl -X POST "https://localhost:5001/api/database/restore" -d "nomeFile=LibreriaEnterprise-backup-2024-11-07"
@@ -125,11 +119,10 @@ L'endpoint `/api/database/restore` consente di ripristinare il database dal file
 
 ## Problemi Comuni
 
-- **`System.ArgumentNullException: Value cannot be null. (Parameter 'databaseName')`**: Assicurati che `DatabaseName` sia configurato correttamente in `appsettings.json`.
-- **JWT non valido**: Se l'autenticazione fallisce, verifica che il token JWT sia stato copiato correttamente e che i dettagli di `JwtSettings` siano configurati.
+- **JWT non valido**: Se l'autenticazione fallisce, verifica che il token JWT sia stato copiato correttamente anche nella formattazione.
 
 ---
 
 ### Contatti
 
-Per domande o supporto, contatta l'autore del progetto o apri un issue su GitHub.
+Per domande o supporto, mi scriva alla email luca.sotgia@studenti.unicam.it o su github in questa repository.
