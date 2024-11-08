@@ -14,9 +14,9 @@ namespace ProgEntLib.Service
         private readonly IConfiguration _configuration;
         private readonly ILogger<UtenteService> _logger;
 
-        public UtenteService(IMongoDatabase database, IConfiguration configuration, ILogger<UtenteService> logger)
+        public UtenteService(IMongoCollection<Utente> utenteCollection, IConfiguration configuration, ILogger<UtenteService> logger)
         {
-            _utentiCollection = database.GetCollection<Utente>("users");
+            _utentiCollection = utenteCollection;
             _configuration = configuration;
             _logger = logger;
         }

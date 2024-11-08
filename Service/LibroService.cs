@@ -11,11 +11,10 @@ namespace ProgEntLib.Service
         private readonly IMongoCollection<Libro> _libroCollection;
         private readonly IMongoCollection<Categoria> _categorieCollection;
 
-        public LibroService(IMongoClient mongoClient, IOptions<MongoDBSettings> settings)
+        public LibroService(IMongoCollection<Libro> collectionLibro, IMongoCollection<Categoria> collectionCategoria)
         {
-            var database = mongoClient.GetDatabase(settings.Value.DatabaseName);
-            _libroCollection = database.GetCollection<Libro>(settings.Value.CollectionNames.Libri);
-            _categorieCollection = database.GetCollection<Categoria>(settings.Value.CollectionNames.Categorie);
+            _libroCollection = collectionLibro;
+            _categorieCollection = collectionCategoria;
         }
 
         internal async Task<bool> AggiornaLibroAsync(string id, DTOLibro dtoLibro)
