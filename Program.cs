@@ -109,7 +109,7 @@ namespace ProgEntLib
                 });
             });
 
-
+            //startup dell applicazione vera e propria
             var app = builder.Build();
 
             if (app.Environment.IsDevelopment())

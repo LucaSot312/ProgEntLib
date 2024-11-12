@@ -7,7 +7,7 @@ con funzionalità per la gestione di utenti, libri e categorie, implementata con
 ## Requisiti
 
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [MongoDB](https://www.mongodb.com/try/download/community) e configurazione di un cluster (può essere locale o cloud, come MongoDB Atlas)
+- [MongoDB](https://www.mongodb.com/try/download/community) come cluster io ho utilizzato MongoDB dato che avevo un cluster attivo dall'esame di Ingegneria del Software
 - **Nota**: Per il backup e restore dei dati senza installare `mongodump` e `mongorestore`, la gestione è integrata nel codice e utilizza un file JSON per serializzare/deserializzare i dati.
 
 ## Configurazione
@@ -18,7 +18,7 @@ con funzionalità per la gestione di utenti, libri e categorie, implementata con
    cd ProgEntLib
    ```
 
-2. **Configurazione di `appsettings.json`**: Assicurati che il file `appsettings.json` contenga i dettagli di connessione a MongoDB e i parametri JWT, come segue:
+2. **Configurazione di `appsettings.json`**: il file `appsettings.json` contiene i dettagli di connessione a MongoDB e i parametri JWT, come segue:
 
    ```json
    {
@@ -51,9 +51,9 @@ con funzionalità per la gestione di utenti, libri e categorie, implementata con
    }
    ```
 
-   - **ConnectionString**: Inserisci la stringa di connessione al database MongoDB.
+   - **ConnectionString**: Stringa di connessione a mongodb contenente Username, password e nome cluster.
    - **BackupFolderPath**: Specifica la cartella per il backup, già impostata su `Backups` all'interno del progetto.
-   - **JwtSettings.SecretKey**: Sostituisci `<SECRET_KEY>` con una chiave segreta di tua scelta.
+   - **JwtSettings.SecretKey**: Nella `<SECRET_KEY>` va inserita una stringa di almeno 32 caratteri con maiuscole minuscole numeri e simboli
 
 3. **NuGet Packages**: Il progetto gestisce automaticamente i pacchetti necessari; se necessario, aggiorna le dipendenze con il comando:
    ```bash
@@ -62,25 +62,24 @@ con funzionalità per la gestione di utenti, libri e categorie, implementata con
 
 ## Avvio dell'applicazione
 
-Esegui il progetto con il seguente comando:
-```bash
-dotnet run
-```
+`dotnet run --launch-profile https`
 
-L'applicazione sarà disponibile all'indirizzo `https://localhost:5001` (o come specificato nella tua configurazione).
+L'applicazione sarà disponibile all'indirizzo `https://localhost:7262/swagger` (oppure http://localhost:5218/swagger) secondo quanto configurato su `launchSettings.json`.
 
 ## Testing dell'API
 
 ### Autenticazione
 
 1. **Registrazione Utente**: Usa l'endpoint `/api/utenti/registrazione` per creare un nuovo utente.
-2. **Autenticazione Utente**: Usa l'endpoint `/api/utenti/login` per ottenere un token JWT. Inserisci il token JWT ottenuto in Swagger o nel client HTTP per autenticare le richieste.
+2. **Generazione Token**: Usa l'endpoint `/api/utenti/login` per ottenere un token JWT. 
+3. **Autenticazione Utente** Inserisci il token JWT ottenuto in Swagger o nel terminale dell'IDE nel campo Authorize in alto a destra 
+     per autenticare le richieste. **Consiglio** per evitare errori di formattazione incollare con `CTRL+SHIFT+V`.
 
 ### Test delle API
 
-L'applicazione è documentata con Swagger. Accedi alla documentazione all'indirizzo `https://localhost:5001/swagger`.
+L'applicazione è documentata con Swagger.
 
-Alcuni endpoint chiave:
+Endpoint disponibili:
 
 - **Categorie**:
   - POST `/api/categorie` - Crea una nuova categoria.
@@ -91,14 +90,14 @@ Alcuni endpoint chiave:
   - DELETE `/api/libri/{id}` - Elimina un libro.
   - GET `/api/libri` - Cerca libri con filtri (categoria, nome, autore, ecc.) e paginazione.
 - **Backup e Restore del Database**:
-  - POST `/api/database/backup` - Effettua il backup del database. Il file JSON viene salvato nella cartella `Backups`.
-  - POST `/api/database/restore` - Ripristina il database da un file JSON nella cartella `Backups`.
+  - POST `/api/database/backup` - Effettua il backup del database. I file JSON per ogni tabella vengono salvati nella cartella `Backups`.
+  - POST `/api/database/restore` - Ripristina il database da un file JSON nella cartella `Backups`tramite il proprio nome, recuperando la tabella.
 
 ## Backup e Restore del Database
 
 ### Backup
 
-L'endpoint `/api/database/backup` genera un file JSON nella cartella `Backups` contenente il dump dell'intero database. Questo file può essere caricato in altri ambienti o usato per il ripristino.
+L'endpoint `/api/database/backup` genera i file JSON nella cartella `Backups` contenenti il dump dell'intero database. Questo file può essere caricato in altri ambienti o usato per il ripristino.
 
 1. Esegui una richiesta POST a `/api/database/backup` :
    ```bash
@@ -120,9 +119,4 @@ L'endpoint `/api/database/restore` consente di ripristinare il database dal file
 ## Problemi Comuni
 
 - **JWT non valido**: Se l'autenticazione fallisce, verifica che il token JWT sia stato copiato correttamente anche nella formattazione.
-
----
-
-### Contatti
-
-Per domande o supporto, mi scriva alla email luca.sotgia@studenti.unicam.it o su github in questa repository.
+- **Porta occupata**: Se la porta che ho definito sul `launchsettings.json` risulta occupata da un altro processo sulla macchina cambiare valore nel file

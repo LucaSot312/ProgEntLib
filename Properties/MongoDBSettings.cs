@@ -1,6 +1,4 @@
-﻿using MongoDB.Driver;
-
-namespace ProgEntLib.Properties
+﻿namespace ProgEntLib.Properties
 {
     public class MongoDBSettings
     {

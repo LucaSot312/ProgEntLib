@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using ProgEntLib.DTO;
 using ProgEntLib.Models;
-using ProgEntLib.Properties;
 
 namespace ProgEntLib.Service
 {
